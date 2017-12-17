@@ -1,0 +1,70 @@
+Features
+	- 1 16-bit Indirection register
+	- 4 16-bit Registers
+	- 255 8-bit Flag Registers
+	- 8 8-bit Ports
+		- 0 console in/out
+		- 1 tape in/out
+	- Program Counter
+	- Call Stack 16 x 8-bit
+	- 65535 x 8-bit Memory
+	- MSB / big-endian
+
+Registers (R)
+	A-D -> 0-3
+
+Markers (:)
+	:NAME
+
+Locations (@)
+Code	ASM		Type			Values
+0x0		P		Port			#
+0x1		R		Register		A-D
+0x2		M		Memory			0-65535
+0x3		L		Literal			0-65535 | 'a' | "a" | 0xFFFF
+0x4		F		Flag			0-255
+
+Instructions
+
+Code	ASM
+	Misc
+0x00	NOP
+	Registers
+0x10	LOAD	R	@
+0x11	SAVE	R	@
+0x12	LOADH	R	@
+0x13	LOADL	R	@
+0x14	SAVEH	R	@
+0x15	SAVEL	R	@
+	Indirection
+0x60	LOADI	R
+0x61	SAVEI	R
+0x62	CLRI
+0x63	INCI
+0x64	DECI
+0x65	SETI	R
+	Accumulator
+0x20	CLR		R
+0x21	ADD		R	@
+0x22	SUB		R	@
+0x23	DIV		R	@
+0x24	MUL		R	@
+0x25	INC		R
+0x26	DEC		R
+	Stack
+0x40	CALL	#
+0x41	RET
+	Program Flow
+		:Marker
+0x50	HALT
+0x51	JMP		#|:
+0x52	JZ		R #|:
+0x53	JNZ		R #|:
+0x54	JBS		R 0-7 #|:
+0x55	JBC		R 0-7 #|:
+
+Program Format
+[...ASM...]
+MEMORY
+0x100 "string abcd"
+100 0x00 00 00
