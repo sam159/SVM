@@ -3,14 +3,20 @@
   <PropertyGroup>
     <OutputType>Exe</OutputType>
     <TargetFramework>netcoreapp2.0</TargetFramework>
+    <StartupObject></StartupObject>
+    <ApplicationIcon />
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="PGM\A.txt" />
+    <None Remove="PGM\CALL.txt" />
+    <None Remove="PGM\HELLO.txt" />
   </ItemGroup>
 
   <ItemGroup>
-    <Content Include="PGM\A.txt">
+    <Content Include="PGM\CALL.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="PGM\HELLO.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>

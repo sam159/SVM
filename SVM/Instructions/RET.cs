@@ -19,10 +19,11 @@ namespace SVM.Instructions
         public override void Exec(VM vm, byte[] vars)
         {
             Debug.Assert(vars.Length == 0);
-            Debug.Assert(vm.SP >= 0);
+            Debug.Assert(vm.SP > 0);
 
+            vm.SP--;
             vm.PC = vm.STACK[vm.SP];
-            vm.STACK[vm.SP--] = 0;
+            vm.STACK[vm.SP] = 0;
         }
 
         public override string ToASM(byte[] vars)

@@ -6,7 +6,7 @@ namespace SVM.Instructions
 {
     class MUL : ADD
     {
-        public override string ASM => "SUB";
+        public override string ASM => "MUL";
 
         public override byte OP => 0x24;
         
