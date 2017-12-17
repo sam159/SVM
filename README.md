@@ -1,2 +1,2 @@
 # SVM
-Sam Virtual Machine
+Sams Virtual Machine

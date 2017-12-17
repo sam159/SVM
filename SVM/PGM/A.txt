@@ -1,0 +1,41 @@
+﻿ORIGIN 0
+#Print string 5 times
+
+CLR B
+ADD B L 5
+ADD B L 48
+SAVE B P 0
+SUB B L 48
+
+LOAD A L 0x300		#Set string start
+SETI A
+JMP :PRINTA
+
+:PRINTA				#Print until zero
+LOADI A
+JZ A :NEWLINE
+SAVE A P 0
+INCI
+JMP :PRINTA
+
+:NEWLINE			#New Line
+LOAD A L 13
+SAVE A P 0
+LOAD A L 10
+SAVE A P 0
+
+LOAD A L 0x300		#Set string start
+SETI A
+
+DEC B				#Check Counter and stop if 5 printed
+JZ B :STOP
+ADD B L 48
+SAVE B P 0
+SUB B L 48
+JMP :PRINTA
+
+:STOP
+HALT
+
+MEMORY
+0x300	" HELLO WORLD!"
