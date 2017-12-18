@@ -72,8 +72,8 @@ namespace SVM
                 var pc = PC;
                 var instr = instructions[MEM[PC++]];
                 byte[] decoded = instr.Decode(this);
-                //Console.WriteLine("A{0} B{1} C{2} D{3}", R[0], R[1], R[2], R[3]);
-                //Console.WriteLine("0x{0:X4} {1}", pc, instr.ToASM(decoded));
+                Console.Write("{4:X4} | A{0:X3} B{1:X3} C{2:X3} D{3:X3} | ", R[0], R[1], R[2], R[3], pc);
+                Console.WriteLine("0x{0:X4} {1}", pc, instr.ToASM(decoded));
                 instr.Exec(this, decoded);
                 //Console.ReadKey(true);
             }

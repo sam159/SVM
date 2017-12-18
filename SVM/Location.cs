@@ -9,12 +9,16 @@ namespace SVM
     {
         public const byte PORT_CODE = 0x0;
         public const string PORT_ASM = "P";
-        public const byte REG_CODE = 0x1;
-        public const string REG_ASM = "R";
-        public const byte MEM_CODE = 0x2;
-        public const string MEM_ASM = "M";
-        public const byte LITERAL_CODE = 0x3;
-        public const string LITERAL_ASM = "L";
+        public const byte REGISTER_CODE = 0x1;
+        public const string REGISTER_ASM = "R";
+        public const byte MEMORY_CODE = 0x2;
+        public const string MEMORY_ASM = "M";
+        public const byte IMMEDIATE_CODE = 0x3;
+        public const string IMMEDIATE_ASM = "I";
+        public const byte FLAG_CODE = 0x4;
+        public const string FLAG_ASM = "F";
+        public const byte ADDRESS_CODE = 0x5;
+        public const string ADDRESS_ASM = "A";
 
         public const int SIZE = 3;
 
@@ -23,9 +27,11 @@ namespace SVM
             switch (type)
             {
                 case PORT_ASM: return PORT_CODE;
-                case REG_ASM: return REG_CODE;
-                case MEM_ASM: return MEM_CODE;
-                case LITERAL_ASM: return LITERAL_CODE;
+                case REGISTER_ASM: return REGISTER_CODE;
+                case MEMORY_ASM: return MEMORY_CODE;
+                case IMMEDIATE_ASM: return IMMEDIATE_CODE;
+                case FLAG_ASM: return FLAG_CODE;
+                case ADDRESS_ASM:return ADDRESS_CODE;
                 default: throw new Exception("Invalid location type");
             }
         }
@@ -34,38 +40,63 @@ namespace SVM
             switch (type)
             {
                 case PORT_CODE: return PORT_ASM;
-                case REG_CODE: return REG_ASM;
-                case MEM_CODE: return MEM_ASM;
-                case LITERAL_CODE: return LITERAL_ASM;
+                case REGISTER_CODE: return REGISTER_ASM;
+                case MEMORY_CODE: return MEMORY_ASM;
+                case IMMEDIATE_CODE: return IMMEDIATE_ASM;
+                case FLAG_CODE: return FLAG_ASM;
+                case ADDRESS_CODE: return ADDRESS_ASM;
                 default: throw new Exception("Invalid location type");
             }
         }
 
         public static Location FromASM(string asm)
         {
-            var parts = asm.Split(" ", 2);
-            Debug.Assert(parts.Length > 0);
-            byte type = EncodeType(parts[0]);
+            Debug.Assert(asm.Length > 1);
+            asm = asm.Replace(" ", "");
+            byte type = EncodeType(asm[0].ToString());
             ushort loc = 0;
-            Debug.Assert(parts.Length == 2);
-            string locVal = parts[1];
-            if (locVal.StartsWith('\'') || locVal.StartsWith('"'))
+            string locVal = asm.Substring(1);
+            switch(type)
             {
-                Debug.Assert(locVal.Length > 1);
-                loc = (byte)locVal[1];
-            }
-            else if (locVal.StartsWith("0x", StringComparison.InvariantCultureIgnoreCase))
-            {
-                Debug.Assert(locVal.Length > 2);
-                loc = ushort.Parse(locVal.Substring(2), System.Globalization.NumberStyles.HexNumber);
-            }
-            else
-            {
-                loc = ushort.Parse(locVal);
+                case PORT_CODE:
+                case FLAG_CODE:
+                    loc = byte.Parse(locVal);
+                    break;
+                case ADDRESS_CODE:
+                case REGISTER_CODE:
+                    loc = Register.FromASM(locVal);
+                    break;
+                case MEMORY_CODE:
+                    loc = ReadNumber(locVal, true);
+                    break;
+                case IMMEDIATE_CODE:
+                    loc = ReadNumber(locVal, false);
+                    break;
             }
 
             return new Location(type, loc);
         }
+
+        private static ushort ReadNumber(string val, bool allowChar)
+        {
+            ushort converted;
+            if (allowChar && (val.StartsWith('\'') || val.StartsWith('"')))
+            {
+                Debug.Assert(val.Length > 1);
+                converted = (byte)val[1];
+            }
+            else if (val.StartsWith("0x", StringComparison.InvariantCultureIgnoreCase))
+            {
+                Debug.Assert(val.Length > 2);
+                converted = ushort.Parse(val.Substring(2), System.Globalization.NumberStyles.HexNumber);
+            }
+            else
+            {
+                converted = ushort.Parse(val);
+            }
+            return converted;
+        }
+
         public static Location FromByteCode(byte[] data, int start)
         {
             Debug.Assert(data.Length > start);
@@ -90,13 +121,20 @@ namespace SVM
             switch (type)
             {
                 case PORT_CODE:
+                    Debug.Assert(loc <= VM.PORTS);
                     return vm.Ports[loc].Read();
-                case REG_CODE:
+                case REGISTER_CODE:
+                    Debug.Assert(loc <= VM.REGISTERS);
                     return vm.R[loc];
-                case MEM_CODE:
+                case MEMORY_CODE:
                     return vm.MEM[loc];
-                case LITERAL_CODE:
+                case IMMEDIATE_CODE:
                     return loc;
+                case FLAG_CODE:
+                    throw new NotImplementedException();
+                case ADDRESS_CODE:
+                    Debug.Assert(loc <= VM.REGISTERS);
+                    return vm.MEM[vm.R[loc]];
                 default: throw new Exception("Invalid location type");
             }
         }
@@ -105,16 +143,24 @@ namespace SVM
             switch (type)
             {
                 case PORT_CODE:
-                    vm.Ports[loc].Write((byte)val);
+                    Debug.Assert(loc <= VM.PORTS);
+                    vm.Ports[loc].Write((byte)(val & 0xFF));
                     break;
-                case REG_CODE:
+                case REGISTER_CODE:
+                    Debug.Assert(loc <= VM.REGISTERS);
                     vm.R[loc] = val;
                     break;
-                case MEM_CODE:
-                    vm.MEM[loc] = (byte)val;
+                case MEMORY_CODE:
+                    vm.MEM[loc] = (byte)(val & 0xFF);
                     break;
-                case LITERAL_CODE:
+                case IMMEDIATE_CODE:
                     throw new Exception("Invalid operation");
+                case FLAG_CODE:
+                    throw new NotImplementedException();
+                case ADDRESS_CODE:
+                    Debug.Assert(loc <= VM.REGISTERS);
+                    vm.MEM[vm.R[loc]] = (byte)(val & 0xFF);
+                    break;
                 default:
                     throw new Exception("Invalid location type");
             }
@@ -122,14 +168,25 @@ namespace SVM
 
         public byte[] Encode()
         {
-            byte ub = (byte)((loc & 0xFF00) >> 8);
-            byte lb = (byte)(loc & 0xFF);
-            return new byte[] { type, ub, lb };
+            return new byte[] { type, loc.HiByte(), loc.LoByte() };
         }
 
         public string ToASM()
         {
-            return string.Format("{0} 0x{1:X}", DecodeType(type), loc);
+            switch(type)
+            {
+                case PORT_CODE:
+                case FLAG_CODE:
+                    return string.Format("{0}{1}", DecodeType(type), loc);
+                case REGISTER_CODE:
+                    return string.Format("R{0}", Register.ToASM((byte)loc));
+                case ADDRESS_CODE:
+                    return string.Format("A{0}", Register.ToASM((byte)loc));
+                case IMMEDIATE_CODE:
+                case MEMORY_CODE:
+                default:
+                    return string.Format("{0}0x{1:X}", DecodeType(type), loc);
+            }
         }
     }
 }

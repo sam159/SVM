@@ -1,0 +1,11 @@
+﻿ORIGIN 0
+		LOAD A I1
+		JMP :PGM
+
+:PGM	SHL A 1
+		NOT A
+		NOT A
+		JZ A :EXIT
+		JMP :PGM
+
+:EXIT	HALT

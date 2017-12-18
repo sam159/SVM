@@ -13,6 +13,7 @@ namespace SVM.Instructions
 
         public override byte[] Encode(string asm, Dictionary<string, ushort> markerRefs)
         {
+            Debug.Assert(asm.Length == 1);
             byte reg = Register.FromASM(asm);
             return new byte[] { OP, reg };
         }

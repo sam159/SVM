@@ -16,11 +16,11 @@ Marker (:)		:XYZ
 
 Locations (@)
 Code	ASM		Type				Values
-0x0		P		Port				0-255
+0x0		P		Port				0-255 | 0xFF
 0x1		R		Register			A-D
-0x2		M		Memory				0-65535
-0x3		I		Immediate			0-65535 | 'a' | "a" | 0xFFFF
-0x4		F		Flag				0-255
+0x2		M		Memory				0-65535 | 0xFFFF
+0x3		#		Immediate			0-65535 | 0xFFFF | 'a' | "a"
+0x4		F		Flag				0-255 | 0xFF
 0x5		A		Address In Register	A-D
 
 Instructions
@@ -48,10 +48,10 @@ Code	ASM
 0x31	AND		R	@
 0x32	OR		R	@
 0x33	XOR		R	@
-0x33	SHL		R	0-8		Shift Left
-0x34	SHR		R	0-8		Shift Right
-0x35	BTS		R	0-8		Bit Set
-0x36	BTC		R	0-8		Bit Clear
+0x34	SHL		R	0-7		Shift Left
+0x35	SHR		R	0-7		Shift Right
+0x36	BTS		R	0-7		Bit Set
+0x37	BTC		R	0-7		Bit Clear
 	Stack
 0x40	CALL	#|:
 0x41	RET

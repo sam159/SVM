@@ -49,8 +49,16 @@ namespace SVM
                 //Records marker locations
                 if (line.StartsWith(':'))
                 {
-                    markers.Add(line.Substring(1), mempos);
-                    continue;
+                    var markerParts = line.Split(" ", 2);
+                    markers.Add(markerParts[0].Substring(1), mempos);
+                    if (markerParts.Length > 1 && !string.IsNullOrWhiteSpace(markerParts[1]))
+                    {
+                        line = markerParts[1].Trim();
+                    }
+                    else
+                    {
+                        continue;
+                    }
                 }
 
                 parts = line.Split(" ", 2, StringSplitOptions.RemoveEmptyEntries);
@@ -122,6 +130,7 @@ namespace SVM
                 }
 
                 byte[] lineData = new byte[0];
+                parts[1] = parts[1].Trim();
                 if (parts[1].StartsWith('\'') || parts[1].StartsWith('"'))
                 {
                     string asciiContent = string.Empty;

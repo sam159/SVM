@@ -1,19 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Text;
+using System.Diagnostics;
 
 namespace SVM.Instructions
 {
-    class SAVEI : LOADI
+    class NOT : CLR
     {
-        public override string ASM => "SAVEI";
+        public override string ASM => "NOT";
 
-        public override byte OP => 0x61;
+        public override byte OP => 0x30;
 
         protected override void Run(VM vm, byte reg)
         {
-            vm.MEM[vm.RI] = (byte)vm.R[reg];
+            vm.R[reg] = (ushort)~vm.R[reg];
         }
     }
 }

@@ -28,7 +28,7 @@ namespace SVM.Instructions
 
         public override string ToASM(byte[] vars)
         {
-            throw new NotImplementedException();
+            return ASM;
         }
     }
 }
