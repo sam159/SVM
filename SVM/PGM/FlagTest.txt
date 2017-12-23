@@ -1,29 +1,34 @@
-﻿ALIAS F_CONSTS          0xFF00
-ALIAS STR_ENABLED       0x100
-ALIAS STR_AVAILABLE     0x110
-ALIAS STR_READBLOCK     0x120
-ALIAS STR_READAVAILABLE 0x130
-ALIAS STR_YES           0x140
-ALIAS STR_NO            0x150
+﻿ALIAS F_CONSTS          M0xFF00
+ALIAS STR_ENABLED       I0x100
+ALIAS STR_AVAILABLE     I0x110
+ALIAS STR_READBLOCK     I0x120
+ALIAS STR_READAVAILABLE I0x130
+ALIAS STR_YES           I0x141
+ALIAS STR_NO            I0x150
+ALIAS STR_TITLE         I0x160
 
 ORIGIN 0
-        LOAD D M F_CONSTS       # Read the flag into reg D
+		LOAD A STR_TITLE
+		CALL :WSTR
+		CALL :WNL
 
-        LOAD A I STR_ENABLED
+        LOAD D F_CONSTS       # Read the flag into reg D
+
+        LOAD A STR_ENABLED
         CALL :WSTR
         JBS D 2 :ENYES          # Check for enabled
-        LOAD A I STR_NO         # Set str to NO if enabled bit not set
+        LOAD A STR_NO         # Set str to NO if enabled bit not set
         JMP :ENWR
-:ENYES  LOAD A I STR_YES
+:ENYES  LOAD A STR_YES
 :ENWR   CALL :WSTR
 		CALL :WNL
 
-		LOAD A I STR_READAVAILABLE
+		LOAD A STR_READAVAILABLE
 		CALL :WSTR
 		JBS D 4 :RAYES
-		LOAD A I STR_NO
+		LOAD A STR_NO
 		JMP :RAWR
-:RAYES  LOAD A I STR_YES
+:RAYES  LOAD A STR_YES
 :RAWR   CALL :WSTR
 		CALL :WNL
 
@@ -44,9 +49,10 @@ ORIGIN 0
         RET
 
 MEMORY
-0x100 "Enabled "
-0x110 "Available "
-0x120 "ReadBlock "
-0x130 "ReadAvailable "
-0x140 "Yes"
+0x100 "Enabled: "
+0x110 "Available: "
+0x120 "Read Block: "
+0x130 "Read Available: "
+0x141 "Yes"
 0x150 "No"
+0x160 "Flag CONSTS:"

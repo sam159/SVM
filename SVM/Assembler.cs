@@ -22,7 +22,7 @@ namespace SVM
 
             var lines = (from l in program.Replace("\t", " ").Split(Environment.NewLine)
                          where !l.StartsWith('#') && !String.IsNullOrWhiteSpace(l)
-                         select l.Split('#').First().Trim().ToUpper()).ToArray();
+                         select l.Split('#').First().Trim()).ToArray();
 
             int i = 0;
             ushort mempos = 0;
@@ -38,7 +38,7 @@ namespace SVM
             for (; i < lines.Length; i++)
             {
                 line = lines[i];
-                if (line == "MEMORY")
+                if (line.ToUpper() == "MEMORY")
                 {
                     i++;
                     break;
@@ -72,7 +72,7 @@ namespace SVM
                 }
 
                 parts = line.Split(" ", 2, StringSplitOptions.RemoveEmptyEntries);
-                var op = parts[0];
+                var op = parts[0].ToUpper();
                 if (op == "ORIGIN")
                 {
                     Debug.Assert(parts.Length == 2);
@@ -103,7 +103,7 @@ namespace SVM
                 var instr = instructions.First(x => x.ASM == op);
 
                 Dictionary<string, ushort> markerRefs = new Dictionary<string, ushort>();
-                var bytecode = instr.Encode(parts.Length > 1 ? parts[1] : string.Empty, markerRefs);
+                var bytecode = instr.Encode(parts.Length > 1 ? parts[1].ToUpper() : string.Empty, markerRefs);
                 if (markerRefs != null && markerRefs.Count > 0)
                 {
                     foreach (var mRef in markerRefs)
