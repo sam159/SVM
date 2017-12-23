@@ -44,7 +44,7 @@ namespace SVM.Instructions
 
         protected virtual void Run(VM vm, byte reg, byte bit)
         {
-            vm.R[reg] = (ushort)(vm.R[reg] << bit);
+            vm.R[reg] = (ushort)(vm.R[reg] << bit-1);
         }
 
         public override string ToASM(byte[] vars)

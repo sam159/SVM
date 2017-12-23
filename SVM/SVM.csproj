@@ -9,12 +9,16 @@
 
   <ItemGroup>
     <None Remove="PGM\CALL.txt" />
+    <None Remove="PGM\FlagTest.txt" />
     <None Remove="PGM\HELLO.txt" />
     <None Remove="PGM\LOGIC.txt" />
   </ItemGroup>
 
   <ItemGroup>
     <Content Include="PGM\CALL.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="PGM\FlagTest.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="PGM\HELLO.txt">

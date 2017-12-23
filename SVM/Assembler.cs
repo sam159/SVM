@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Linq;
 using System.Diagnostics;
+using System.Text.RegularExpressions;
 
 namespace SVM
 {
@@ -28,8 +29,11 @@ namespace SVM
             ushort lastpos = 0;
             string line;
             string[] parts;
+
             Dictionary<string, ushort> markers = new Dictionary<string, ushort>();
             Dictionary<string, List<ushort>> markerUses = new Dictionary<string, List<ushort>>();
+            Dictionary<string, string> aliases = new Dictionary<string, string>();
+
             //Encode ops until memory section
             for (; i < lines.Length; i++)
             {
@@ -44,6 +48,12 @@ namespace SVM
                 while (line.IndexOf("  ") != -1)
                 {
                     line = line.Replace("  ", " ");
+                }
+
+                //Replace aliases
+                foreach(var alias in aliases)
+                {
+                    line = Regex.Replace(line, string.Format(@"(^|\b){0}($|\b)", alias.Key), alias.Value);
                 }
 
                 //Records marker locations
@@ -75,6 +85,18 @@ namespace SVM
                         mempos = ushort.Parse(parts[1]);
                     }
                     if (mempos > lastpos) lastpos = mempos;
+                    continue;
+                }
+                if (op == "ALIAS")
+                {
+                    Debug.Assert(parts.Length == 2);
+                    var aliasParts = parts[1].Split(' ', 2);
+                    Debug.Assert(aliasParts.Length == 2);
+                    if (aliases.ContainsKey(aliasParts[0]))
+                    {
+                        aliases.Remove(aliasParts[0]);
+                    }
+                    aliases.Add(aliasParts[0], aliasParts[1]);
                     continue;
                 }
 

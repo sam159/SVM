@@ -71,8 +71,8 @@
 | 0x51 | JMP   | [#\|:]           |
 | 0x52 | JZ    | [R] [#\|:]       |
 | 0x53 | JNZ   | [R] [#\|:]       |
-| 0x54 | JBS   | [R] [0-7] [#\|:] |
-| 0x55 | JBC   | [R] [0-7] [#\|:] |
+| 0x54 | JBS   | [R] [1-8] [#\|:] |
+| 0x55 | JBC   | [R] [1-8] [#\|:] |
 | **System**
 | 0x60 | SYS   | [0-255]          | Syscall, parameters depend on call
 
@@ -80,7 +80,8 @@
 
 | ASM    | Parameters | Notes        |
 | ------ | ---------- | ------------ |
-| ORIGIN | [#]        | Sets the Memory Address for the next instruction | 
+| ORIGIN | [#]        | Sets the Memory Address for the next instruction
+| ALIAS  | X Y        | Replaces word X with word Y where X and Y are alpha numberic, only applies after the instruction
 
 ## Program Format
 

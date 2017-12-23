@@ -15,9 +15,7 @@ namespace SVM
         public const string MEMORY_ASM = "M";
         public const byte IMMEDIATE_CODE = 0x3;
         public const string IMMEDIATE_ASM = "I";
-        public const byte FLAG_CODE = 0x4;
-        public const string FLAG_ASM = "F";
-        public const byte ADDRESS_CODE = 0x5;
+        public const byte ADDRESS_CODE = 0x4;
         public const string ADDRESS_ASM = "A";
 
         public const int SIZE = 3;
@@ -30,7 +28,6 @@ namespace SVM
                 case REGISTER_ASM: return REGISTER_CODE;
                 case MEMORY_ASM: return MEMORY_CODE;
                 case IMMEDIATE_ASM: return IMMEDIATE_CODE;
-                case FLAG_ASM: return FLAG_CODE;
                 case ADDRESS_ASM:return ADDRESS_CODE;
                 default: throw new Exception("Invalid location type");
             }
@@ -43,7 +40,6 @@ namespace SVM
                 case REGISTER_CODE: return REGISTER_ASM;
                 case MEMORY_CODE: return MEMORY_ASM;
                 case IMMEDIATE_CODE: return IMMEDIATE_ASM;
-                case FLAG_CODE: return FLAG_ASM;
                 case ADDRESS_CODE: return ADDRESS_ASM;
                 default: throw new Exception("Invalid location type");
             }
@@ -59,7 +55,6 @@ namespace SVM
             switch(type)
             {
                 case PORT_CODE:
-                case FLAG_CODE:
                     loc = byte.Parse(locVal);
                     break;
                 case ADDRESS_CODE:
@@ -127,14 +122,12 @@ namespace SVM
                     Debug.Assert(loc <= VM.REGISTERS);
                     return vm.R[loc];
                 case MEMORY_CODE:
-                    return vm.MEM[loc];
+                    return vm.Read(loc);
                 case IMMEDIATE_CODE:
                     return loc;
-                case FLAG_CODE:
-                    throw new NotImplementedException();
                 case ADDRESS_CODE:
                     Debug.Assert(loc <= VM.REGISTERS);
-                    return vm.MEM[vm.R[loc]];
+                    return vm.Read(vm.R[loc]);
                 default: throw new Exception("Invalid location type");
             }
         }
@@ -151,15 +144,13 @@ namespace SVM
                     vm.R[loc] = val;
                     break;
                 case MEMORY_CODE:
-                    vm.MEM[loc] = (byte)(val & 0xFF);
+                    vm.Write(loc, (byte)(val & 0xFF));
                     break;
                 case IMMEDIATE_CODE:
                     throw new Exception("Invalid operation");
-                case FLAG_CODE:
-                    throw new NotImplementedException();
                 case ADDRESS_CODE:
                     Debug.Assert(loc <= VM.REGISTERS);
-                    vm.MEM[vm.R[loc]] = (byte)(val & 0xFF);
+                    vm.Write(vm.R[loc], (byte)(val & 0xFF));
                     break;
                 default:
                     throw new Exception("Invalid location type");
@@ -176,7 +167,6 @@ namespace SVM
             switch(type)
             {
                 case PORT_CODE:
-                case FLAG_CODE:
                     return string.Format("{0}{1}", DecodeType(type), loc);
                 case REGISTER_CODE:
                     return string.Format("R{0}", Register.ToASM((byte)loc));

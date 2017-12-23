@@ -8,11 +8,11 @@ Bits marked N/A read as zero and writing values will not have an effect.
 
 ### Status | CONSTS | 0x00
 
-|                 | 7   | 6   | 5   | 4   | 3   | 2   | 1   | 0   |
+|                 | 8   | 7   | 6   | 5   | 4   | 3   | 2   | 1   |
 | --------------- | --- | --- | --- | --- | --- | --- | --- | --- |
-| **Read/Write**  |     |     |     |     |     |     | R/W | R   |
-| **Defaults**    |     |     |     |     |     |     | 1   | X   |
-| **Name**        | N/A | N/A | N/A | N/A | N/A | N/A | Enabled | Available |
+| **Read/Write**  |     |     |     |     | R   | R/W | R/W | R   |
+| **Default **    |     |     |     |     | X   | 1   | 1   | X   |
+| **Name**        | N/A | N/A | N/A | N/A | ReadAvailable | ReadBlock | Enabled | Available |
 
 ### Cursor X | CONPOSX | 0x01
 
@@ -50,9 +50,9 @@ Trap status and settings
 <!-- 
 ### Name | ALIAS | 0x00
 
-|                 | 7   | 6   | 5   | 4   | 3   | 2   | 1   | 0   |
+|                 | 8   | 7   | 6   | 5   | 4   | 3   | 2   | 1   |
 | --------------- | --- | --- | --- | --- | --- | --- | --- | --- |
 | **Read/Write**  |     |     |     |     |     |     |     |     |
-| **Defaults**    |     |     |     |     |     |     |     |     |
+| **Default **    |     |     |     |     |     |     |     |     |
 | **Name**        |     |     |     |     |     |     |     |     |
 -->
