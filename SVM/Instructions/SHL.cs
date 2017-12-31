@@ -35,7 +35,7 @@ namespace SVM.Instructions
             byte reg = vars[0];
             byte bit = vars[1];
 
-            if (reg <= VM.REGISTERS)
+            if (reg > VM.REGISTERS)
             {
                 throw new Fault(FaultType.IllegalOp);
             }

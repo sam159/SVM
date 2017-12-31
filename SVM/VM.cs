@@ -82,6 +82,7 @@ namespace SVM
         {
             if (RUN)
             {
+                var nextPC = PC++;
                 try
                 {
                     InstructionCount++;
@@ -89,8 +90,7 @@ namespace SVM
                     {
                         throw new Fault(FaultType.MemoryOverflow);
                     }
-                    var pc = PC;
-                    var op = MEM[PC++];
+                    var op = MEM[nextPC];
                     if (!instructions.ContainsKey(op))
                     {
                         throw new Fault(FaultType.UndefinedOp);
@@ -107,8 +107,9 @@ namespace SVM
                     if (!faultStatus.Trip(flt))
                     {
                         //Halt system as trip failed (already tripped or not enabled)
+                        var nextBytes = BitConverter.ToString(MEM.Subset(nextPC, 4)).Replace("-", " ");
                         Ports[0].Write(Encoding.ASCII.GetBytes(
-                            string.Format("Unhandled Fault [{0}] at 0x{1:X2}", flt.Type, PC)
+                            string.Format("Unhandled Fault [{0}] at 0x{1:X2}: next bytes {2}.", flt.Type, nextPC, nextBytes)
                             ));
                         RUN = false;
                     } else

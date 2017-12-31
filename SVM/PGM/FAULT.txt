@@ -20,10 +20,9 @@ ORIGIN 0x10
 			CALL :WRNL
 			RET
 
-:MAIN		LOAD A I0x0			# Set fault handler to 0x10
-			SAVE A F_FLTJH
-			LOAD A I0x10
-			SAVE A F_FLTJL
+:MAIN		LOAD A I0x10		# Set fault handler to 0x10
+			SAVEH A F_FLTJH
+			SAVEL A F_FLTJL
 			CLR A
 			BTS A 1
 			SAVE A F_FLTSTS		# Enable fault handler

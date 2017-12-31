@@ -34,7 +34,7 @@ namespace SVM.Instructions
         {
             Debug.Assert(vars.Length > 1);
             var reg = vars[0];
-            if (reg <= VM.REGISTERS)
+            if (reg > VM.REGISTERS)
             {
                 throw new Fault(FaultType.IllegalOp);
             }
