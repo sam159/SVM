@@ -56,7 +56,7 @@ If a second fault occurs before trip is cleared, the system will halt; this know
 
 **Undefined Op** indicates an operation that was unknown. **Illegal Op** indicates that the parameters to the operation were not valid.
 
-**Stack Exceeded** Indicates that the stack either overflowed (PUSH or CALL when full) or underflowed (RET or POP when empty). In this condition the stack pointer is reset to 0.
+**Stack Exceeded** Indicates that the stack either overflowed (PUSH or CALL when full) or underflowed (RET or POP when empty).
 
 ### Fault Routine High Byte | FLTJH | 0x11
 

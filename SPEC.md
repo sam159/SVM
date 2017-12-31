@@ -92,7 +92,7 @@
 	:MARKERA    JMP :MARKERB    # This is a comment
 	:MARKERB    INC A
 	            JMP :MARKERA
-    [...ASM Instrictions...]
+    [...ASM Instructions...]
     MEMORY
     0x100 "string abcd"
     100 0x00 00 00
