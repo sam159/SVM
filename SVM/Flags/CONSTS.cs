@@ -17,7 +17,9 @@ namespace SVM.Flags
 
         public override byte Address => 0x00;
 
-        public override byte Read(VM vm)
+        public CONSTS(VM vm) : base(vm) { }
+
+        public override byte Read()
         {
             var port = vm.Ports[0] as ConsolePort;
             Debug.Assert(port != null);
@@ -39,7 +41,7 @@ namespace SVM.Flags
             return result;
         }
 
-        public override void Write(VM vm, byte val)
+        public override void Write(byte val)
         {
             var port = vm.Ports[0] as ConsolePort;
             Debug.Assert(port != null);

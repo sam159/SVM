@@ -1,0 +1,75 @@
+﻿ALIAS F_FLTSTS  M0xFF10
+ALIAS F_FLTJH   M0xFF11
+ALIAS F_FLTJL   M0xFF12
+ALIAS STR_FAULT I0x100
+ALIAS STR_OK	I0x120
+
+ORIGIN 0
+			JMP :MAIN			# Jump to program entry point
+
+ORIGIN 0x10
+			LOAD A F_FLTSTS		# Load fault status flag
+			BTC A 2				# Clear trip bit
+			SAVE A F_FLTSTS		# Save flag back
+			PUSH A				# Save the status code on the stack
+			LOAD A STR_FAULT	# Write message to console
+			CALL :WR_MSG
+			POP A				# Get the status code back
+			BTC A 1				# Remove the enabled bit
+			CALL :WRHEX			# Output the hex code for the fault
+			CALL :WRNL
+			RET
+
+:MAIN		LOAD A I0x0			# Set fault handler to 0x10
+			SAVE A F_FLTJH
+			LOAD A I0x10
+			SAVE A F_FLTJL
+			CLR A
+			BTS A 1
+			SAVE A F_FLTSTS		# Enable fault handler
+
+
+			POP A				# Nothing in stack!
+								# This should trigger the fault handler above
+
+			LOAD A STR_OK		# Once handled, we continue from here
+			CALL :WR_MSG
+			CALL :WRNL
+
+			HALT
+
+:WR_MSG		LOAD C RA
+:WR_MSG_L	LOAD A AC
+			JZ A :WR_MSG_R
+			SAVE A P0
+			INC C
+			JMP :WR_MSG_L
+:WR_MSG_R	CLR C
+			RET
+
+:WRNL		PUSH A
+			LOAD A I13
+			SAVE A P0
+			LOAD A I10
+			SAVE A P0
+			POP A
+			RET
+
+:WRHEX		LOAD B RA
+			SHR B 4			# Upper 4 bits
+			ADD B I0x130
+			LOAD B AB
+			SAVE B P0
+			LOAD B RA
+			AND B I0x0F		# Lower 4 bits
+			ADD B I0x130
+			LOAD B AB
+			SAVE B P0
+			CLR B
+			RET
+
+
+MEMORY
+0x100	"Fault Occured. Code: 0x"
+0x120	"All Good Now :)"
+0x130	0x 30 31 32 33 34 35 36 37 38 39 41 42 43 44 45 46	#0-F in ACSII

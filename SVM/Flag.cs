@@ -8,7 +8,7 @@ namespace SVM
 {
     abstract class Flag
     {
-        public static Flag[] GetAllFlags()
+        public static Flag[] GetAllFlags(VM vm)
         {
             var types = from t in Assembly.GetAssembly(typeof(Flag)).GetTypes()
                         where t.IsSubclassOf(typeof(Flag))
@@ -18,16 +18,26 @@ namespace SVM
 
             foreach (var t in types)
             {
-                flags.Add((Flag)Activator.CreateInstance(t));
+                if (!t.IsAbstract)
+                {
+                    flags.Add((Flag)Activator.CreateInstance(t, vm));
+                }
             }
 
             return flags.ToArray();
         }
 
+        protected VM vm;
+
+        public Flag(VM vm)
+        {
+            this.vm = vm;
+        }
+
         public abstract string ASM { get; }
         public abstract byte Address { get; }
 
-        public abstract byte Read(VM vm);
-        public abstract void Write(VM vm, byte val);
+        public abstract byte Read();
+        public abstract void Write(byte val);
     }
 }

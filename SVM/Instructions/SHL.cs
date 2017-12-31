@@ -17,7 +17,6 @@ namespace SVM.Instructions
             Debug.Assert(parts.Length == 2);
             byte reg = Register.FromASM(parts[0]);
             byte bit = byte.Parse(parts[1]);
-            Debug.Assert(bit < 8);
 
             return new byte[] { OP, reg, bit };
         }
@@ -36,15 +35,17 @@ namespace SVM.Instructions
             byte reg = vars[0];
             byte bit = vars[1];
 
-            Debug.Assert(reg <= VM.REGISTERS);
-            Debug.Assert(bit < 8);
+            if (reg <= VM.REGISTERS)
+            {
+                throw new Fault(FaultType.IllegalOp);
+            }
 
             Run(vm, reg, bit);
         }
 
         protected virtual void Run(VM vm, byte reg, byte bit)
         {
-            vm.R[reg] = (ushort)(vm.R[reg] << bit-1);
+            vm.R[reg] = (ushort)(vm.R[reg] << bit);
         }
 
         public override string ToASM(byte[] vars)

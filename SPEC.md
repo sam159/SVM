@@ -61,11 +61,13 @@
 | 0x33 | XOR   | [R] [@]          |
 | 0x34 | SHL   | [R] [0-7]        | Shift Left 
 | 0x35 | SHR   | [R] [0-7]        | Shift Right
-| 0x36 | BTS   | [R] [0-7]        | Bit Set
-| 0x37 | BTC   | [R] [0-7]        | Bit Clear
+| 0x36 | BTS   | [R] [1-8]        | Bit Set
+| 0x37 | BTC   | [R] [1-8]        | Bit Clear
 | **Stack**
 | 0x40 | CALL  | [#\|:]           |
 | 0x41 | RET   |                  |
+| 0x42 | PUSH  | [R]              |
+| 0x43 | POP   | [R]              |
 | **Program Flow**
 | 0x50 | HALT  |                  |
 | 0x51 | JMP   | [#\|:]           |
@@ -75,6 +77,7 @@
 | 0x55 | JBC   | [R] [1-8] [#\|:] |
 | **System**
 | 0x60 | SYS   | [0-255]          | Syscall, parameters depend on call
+| 0x61 | BRK   |                  | Pauses program execution if debug is enabled
 
 ### Assembler Only
 

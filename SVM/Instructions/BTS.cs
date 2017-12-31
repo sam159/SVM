@@ -12,6 +12,7 @@ namespace SVM.Instructions
 
         protected override void Run(VM vm, byte reg, byte bit)
         {
+            bit--;
             vm.R[reg] = (ushort)(vm.R[reg] | 1 << bit);
         }
     }

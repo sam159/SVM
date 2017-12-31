@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.IO;
 
 namespace SVM
@@ -27,11 +28,11 @@ namespace SVM
 
             var mem = asm.Compile(content);
             Console.WriteLine("Compiled to {0} bytes", mem.Length);
-            
+
             var vm = new VM();
             vm.CycleDelay = 25;
             vm.Load(mem, 0);
-
+            
             vm.Run();
 
             Console.ReadKey(true);

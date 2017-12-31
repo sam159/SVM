@@ -41,9 +41,7 @@ namespace SVM.Instructions
         {
             Debug.Assert(vars.Length == 2);
 
-            Debug.Assert(vm.SP < VM.STACKDEPTH);
-
-            vm.STACK[vm.SP++] = vm.PC;
+            vm.PushStack(vm.PC);
             var jmp = (ushort)((vars[0] << 8) + vars[1]);
             vm.PC = jmp;
         }

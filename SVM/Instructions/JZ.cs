@@ -47,7 +47,10 @@ namespace SVM.Instructions
         {
             Debug.Assert(vars.Length == 3);
             byte reg = vars[0];
-            Debug.Assert(reg <= VM.REGISTERS);
+            if (reg <= VM.REGISTERS)
+            {
+                throw new Fault(FaultType.IllegalOp);
+            }
             ushort loc = (ushort)((vars[1] << 8) + vars[2]);
 
             CheckJump(vm, reg, loc);

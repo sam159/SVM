@@ -34,7 +34,10 @@ namespace SVM.Instructions
         {
             Debug.Assert(vars.Length > 1);
             var reg = vars[0];
-            Debug.Assert(reg <= VM.REGISTERS);
+            if (reg <= VM.REGISTERS)
+            {
+                throw new Fault(FaultType.IllegalOp);
+            }
             var loc = Location.FromByteCode(vars, 1);
 
             Run(vm, reg, loc);

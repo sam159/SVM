@@ -56,6 +56,12 @@ namespace SVM
                     line = Regex.Replace(line, string.Format(@"(^|\b){0}($|\b)", alias.Key), alias.Value);
                 }
 
+                //Skip empty lines
+                if (string.IsNullOrWhiteSpace(line))
+                {
+                    continue;
+                }
+
                 //Records marker locations
                 if (line.StartsWith(':'))
                 {
@@ -136,6 +142,9 @@ namespace SVM
                 }
             }
 
+            //Read MEMORY section
+            var dataEnd = lastpos;
+
             for (; i < lines.Length; i++)
             {
                 line = lines[i];
@@ -182,6 +191,12 @@ namespace SVM
                         lineData[ldi] = byte.Parse(hex.Substring(di, 2), System.Globalization.NumberStyles.HexNumber);
                     }
                 }
+
+                if (dataOrigin < dataEnd)
+                {
+                    throw new Exception("Memory section starts within data section");
+                }
+
                 Array.Copy(lineData, 0, mem, dataOrigin, lineData.Length);
                 if (lastpos < dataOrigin + lineData.Length)
                 {
